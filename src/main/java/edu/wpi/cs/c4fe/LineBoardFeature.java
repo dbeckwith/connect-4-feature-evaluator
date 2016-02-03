@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class LineBoardFeature {
 
-    public static final int[] VALID_DIRS = {1, -1, 1, 0, 1, 1, 0, 1};
+    public static final int[] VALID_DIRS = { 1, -1, 1, 0, 1, 1, 0, 1 };
 
     private final BoardPos[] positions;
     private final int length;

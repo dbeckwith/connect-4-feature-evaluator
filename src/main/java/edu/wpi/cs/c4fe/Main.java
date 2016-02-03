@@ -1,14 +1,12 @@
 package edu.wpi.cs.c4fe;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class is the main class for running the connect 4 feature evaluator.
+ *
  * @author Aditya Nivarthi
  */
 public class Main {
@@ -19,6 +17,7 @@ public class Main {
 
     /**
      * Main method.
+     *
      * @param args Command line arguments.
      */
     public static void main(String[] args) {
@@ -29,11 +28,31 @@ public class Main {
         String inputFile = args[0];
         String outputFile = args[1];
 
-        List<GameState> inputStates = Main.read(inputFile);
+        List<GameState> states = read(inputFile);
+
+        BoardFeature[] featureTesters = new BoardFeature[] {
+                new BottomLeftFeature(),
+                new CenterMajorityFeature(),
+                new LineBoardFeatureCounter()
+        };
+        Map<String, Number[]> features = new HashMap<>();
+        for (int i = 0; i < states.size(); i++) {
+            int row = i;
+            for (BoardFeature tester : featureTesters) {
+                Map<String, Number> stateFeatures = tester.apply(states.get(row));
+                stateFeatures.forEach((name, value) -> {
+                    features.computeIfAbsent(name, s -> new Number[states.size()])[row] = value;
+                });
+            }
+        }
+        System.out.println(features);
+
+        write(outputFile, states.size(), features);
     }
 
     /**
      * Returns the list of {@link GameState}s from the specified input file.
+     *
      * @param filename The name of the input file to read.
      * @return a List&lt;GameState&gt;
      */
@@ -68,18 +87,36 @@ public class Main {
                 }
 
                 // Create a new GameState from the board
-                GameState state = new GameState(CONNECT_LENGTH, gameBoard, new boolean[]{false, false});
+                GameState state = new GameState(CONNECT_LENGTH, gameBoard, new boolean[] { false, false });
+
                 states.add(state);
             }
 
             return states;
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    protected static void write(String filename, int entries, Map<String, Number[]> features) {
+        try {
+            PrintWriter w = new PrintWriter(new FileOutputStream(filename));
+            w.println(features.keySet().stream().sorted().collect(Collectors.joining(",")));
+            for (int i = 0; i < entries; i++) {
+                int row = i;
+                w.println(features.entrySet()
+                        .stream()
+                        .sorted(Comparator.comparing(Map.Entry::getKey))
+                        .map(Map.Entry::getValue)
+                        .map(values -> values[row])
+                        .map(v -> v == null ? "0" : v.toString())
+                        .collect(Collectors.joining(",")));
+            }
+            w.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

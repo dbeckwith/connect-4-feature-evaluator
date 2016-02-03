@@ -5,6 +5,7 @@
 # IntelliJ project files
 #.idea
 #*.iml
+/boardfeatures.csv
 .idea/workspace.xml
 out
 gen
