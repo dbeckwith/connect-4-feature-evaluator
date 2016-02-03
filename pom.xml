@@ -57,6 +57,8 @@
                 <configuration>
                     <mainClass>edu.wpi.cs.c4fe.Main</mainClass>
                     <arguments>
+                        <argument>trainingdata.csv</argument>
+                        <argument>boardfeatures.csv</argument>
                     </arguments>
                 </configuration>
             </plugin>

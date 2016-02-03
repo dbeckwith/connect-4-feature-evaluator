@@ -6,9 +6,9 @@ package edu.wpi.cs.c4fe;
  * @author Aditya Nivarthi
  */
 public enum BoardCell {
+    NONE("."),
     MIN("-"),
-    MAX("+"),
-    NONE(".");
+    MAX("+");
 
     private String symbol;
 
