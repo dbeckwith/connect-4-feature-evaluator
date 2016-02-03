@@ -11,7 +11,6 @@ public class GameState {
 
     private final BoardCell[][] boardState;
     private final int connectLength;
-    private Player turn;
     private boolean[] playerHasPopped;
 
     /**
@@ -19,13 +18,11 @@ public class GameState {
      *
      * @param w             The width of the game board.
      * @param h             The height of the game board.
-     * @param turn          The player whose turn it is.
      * @param connectLength The number of consecutive pieces needed to win.
      */
-    public GameState(int w, int h, Player turn, int connectLength) {
+    public GameState(int w, int h, int connectLength) {
         boardState = new BoardCell[w][h];
         playerHasPopped = new boolean[2];
-        this.turn = turn;
         this.connectLength = connectLength;
 
         // Reject boards that are not at least the width or height of their connect length
@@ -41,13 +38,11 @@ public class GameState {
     /**
      * Creates a {@link GameState} instance with a {@link Player} turn, connect length for winning, and a board state.
      *
-     * @param turn            The player whose turn it is.
      * @param connectLength   The number of consecutive pieces needed to win.
      * @param boardState      The board state to set for this game state.
      * @param playerHasPopped The states of each player having used their pop move in the game.
      */
-    GameState(Player turn, int connectLength, BoardCell[][] boardState, boolean[] playerHasPopped) {
-        this.turn = turn;
+    public GameState(int connectLength, BoardCell[][] boardState, boolean[] playerHasPopped) {
         this.connectLength = connectLength;
         this.boardState = boardState;
         this.playerHasPopped = playerHasPopped;
@@ -65,7 +60,6 @@ public class GameState {
      */
     private GameState(GameState state) {
         boardState = new BoardCell[state.getWidth()][state.getHeight()];
-        this.turn = state.getTurn();
         this.connectLength = state.connectLength;
         this.playerHasPopped = state.playerHasPopped.clone();
 
@@ -81,13 +75,6 @@ public class GameState {
      */
     public int getConnectLength() {
         return connectLength;
-    }
-
-    /**
-     * Switches the player whose turn it is to play.
-     */
-    public void switchTurn() {
-        turn = turn.getOpponent();
     }
 
     /**
@@ -123,15 +110,6 @@ public class GameState {
     }
 
     /**
-     * Returns the {@link Player} whose turn it is.
-     *
-     * @return a {@link Player}
-     */
-    public Player getTurn() {
-        return turn;
-    }
-
-    /**
      * Indicates whether some object is "equal" to this one.
      *
      * @param obj The object to compare to this object.
@@ -151,7 +129,6 @@ public class GameState {
     public boolean equals(GameState other) {
         return other != null && (other == this ||
                 this.connectLength == other.connectLength &&
-                        this.turn == other.turn &&
                         Arrays.deepEquals(this.boardState, other.boardState) &&
                         Arrays.equals(this.playerHasPopped, other.playerHasPopped));
     }
@@ -165,7 +142,6 @@ public class GameState {
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("Turn: ").append(this.turn).append(" ");
         builder.append("Connect Length: ").append(this.connectLength).append("\n");
         for (int j = 0; j < this.getHeight(); j++) {
             for (int i = 0; i < this.getWidth(); i++) {

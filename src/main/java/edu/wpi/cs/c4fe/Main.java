@@ -53,7 +53,7 @@ public class Main {
                     break;
                 }
 
-                GameState state = new GameState(Player.MIN, CONNECT_LENGTH, gameBoard, new boolean[]{false, false});
+                GameState state = new GameState(CONNECT_LENGTH, gameBoard, new boolean[]{false, false});
                 states.add(state);
             }
 
