@@ -1,5 +1,6 @@
 package edu.wpi.cs.c4fe;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class LineBoardFeatureCounter extends BoardFeature {
                     }
                     LineBoardFeature feature = new LineBoardFeature(positions);
                     if (feature.getLength() > 0) {
-                        features.computeIfAbsent(dir, integer -> new HashMap<>())
+                        features.computeIfAbsent(dir / 2, integer -> new HashMap<>())
                                 .computeIfAbsent(feature.getLength(), integer -> new HashSet<>())
                                 .add(feature);
                     }
@@ -54,7 +55,7 @@ public class LineBoardFeatureCounter extends BoardFeature {
             Map<Integer, Map<Integer, Set<LineBoardFeature>>> features = getFeatures(gameState, player);
             features.forEach((direction, directionFeatures) -> {
                 String featureName = String.format("line_%d_%d", player.ordinal() + 1, direction);
-                featureCounts.compute(featureName, (name, count) -> count == null ? 1 : count.intValue() + 1);
+                featureCounts.put(featureName, directionFeatures.values().stream().mapToInt(Collection::size).sum());
             });
         }
         return featureCounts;
