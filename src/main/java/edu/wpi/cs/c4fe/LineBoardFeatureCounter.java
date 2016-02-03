@@ -53,7 +53,7 @@ public class LineBoardFeatureCounter extends BoardFeature {
         for (Player player : Player.values()) {
             Map<Integer, Map<Integer, Set<LineBoardFeature>>> features = getFeatures(gameState, player);
             features.forEach((direction, directionFeatures) -> {
-                String featureName = String.format("%d%d", player.ordinal() + 1, direction);
+                String featureName = String.format("line_%d_%d", player.ordinal() + 1, direction);
                 featureCounts.compute(featureName, (name, count) -> count == null ? 1 : count.intValue() + 1);
             });
         }
