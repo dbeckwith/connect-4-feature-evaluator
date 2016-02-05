@@ -1,24 +1,25 @@
 package edu.wpi.cs.c4fe;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class is the main class for running the connect 4 feature evaluator.
+ *
+ * @author Aditya Nivarthi
+ */
 public class Main {
 
     public static final int BOARD_WIDTH = 7;
     public static final int BOARD_HEIGHT = 6;
     public static final int CONNECT_LENGTH = 4;
 
+    /**
+     * Main method.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.println("Incorrect number of arguments.");
@@ -28,9 +29,6 @@ public class Main {
         String outputFile = args[1];
 
         List<GameState> states = read(inputFile);
-//        for (GameState e : states) {
-//            System.out.println(e.toString() + "\n");
-//        }
 
         BoardFeature[] featureTesters = new BoardFeature[] {
                 new BottomLeftFeature(),
@@ -52,19 +50,29 @@ public class Main {
         write(outputFile, states.size(), features);
     }
 
+    /**
+     * Returns the list of {@link GameState}s from the specified input file.
+     *
+     * @param filename The name of the input file to read.
+     * @return a List&lt;GameState&gt;
+     */
     protected static List<GameState> read(String filename) {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
 
             String input;
+
+            // Chew header line in file
             bufferedReader.readLine();
 
             List<GameState> states = new ArrayList<>();
 
+            // Each line of input is a new GameState
             while ((input = bufferedReader.readLine()) != null) {
                 String[] positions = input.split(",");
                 BoardCell[][] gameBoard = new BoardCell[BOARD_WIDTH][BOARD_HEIGHT]; // x firs increase, y decrease
 
+                // Set the board values from the positions in the input
                 try {
                     int index = 0;
                     for (int i = 0; i < BOARD_WIDTH; i++) {
@@ -73,19 +81,19 @@ public class Main {
                             index++;
                         }
                     }
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     e.printStackTrace();
                     break;
                 }
 
+                // Create a new GameState from the board
                 GameState state = new GameState(CONNECT_LENGTH, gameBoard, new boolean[] { false, false });
+
                 states.add(state);
             }
 
             return states;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -107,8 +115,7 @@ public class Main {
                         .collect(Collectors.joining(",")));
             }
             w.close();
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
