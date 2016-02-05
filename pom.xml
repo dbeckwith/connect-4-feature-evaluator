@@ -44,22 +44,18 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.4.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
-                    <mainClass>edu.wpi.cs.c4fe.Main</mainClass>
-                    <arguments>
-                        <argument>trainingdata.csv</argument>
-                        <argument>boardfeatures.csv</argument>
-                    </arguments>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>edu.wpi.cs.c4fe.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <finalName>anivarthi-djbeckwith-connect4-feature-evaluator</finalName>
                 </configuration>
             </plugin>
         </plugins>
