@@ -1,6 +1,5 @@
 package edu.wpi.cs.c4fe;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,8 +13,8 @@ public class LineBoardFeatureCounter extends BoardFeature {
      * @param state The game state to evaluate for features.
      * @return a Map&lt;Integer, Set&lt;LineBoardFeature&gt;&gt; of feature length mapped to a collection of all the features of that lnegth.
      */
-    public Map<Integer, Map<Integer, Set<LineBoardFeature>>> getFeatures(GameState state, Player player) {
-        Map<Integer, Map<Integer, Set<LineBoardFeature>>> features = new HashMap<>();
+    public Map<Integer, Set<LineBoardFeature>> getFeatures(GameState state, Player player) {
+        Map<Integer, Set<LineBoardFeature>> features = new HashMap<>();
         int n = state.getConnectLength();
 
         for (int dir = 0; dir < LineBoardFeature.VALID_DIRS.length; dir += 2) {
@@ -37,8 +36,7 @@ public class LineBoardFeatureCounter extends BoardFeature {
                     }
                     LineBoardFeature feature = new LineBoardFeature(positions);
                     if (feature.getLength() > 0) {
-                        features.computeIfAbsent(dir / 2, integer -> new HashMap<>())
-                                .computeIfAbsent(feature.getLength(), integer -> new HashSet<>())
+                        features.computeIfAbsent(feature.getLength(), integer -> new HashSet<>())
                                 .add(feature);
                     }
                 }
@@ -52,10 +50,10 @@ public class LineBoardFeatureCounter extends BoardFeature {
     public Map<String, Number> apply(GameState gameState) {
         Map<String, Number> featureCounts = new HashMap<>();
         for (Player player : Player.values()) {
-            Map<Integer, Map<Integer, Set<LineBoardFeature>>> features = getFeatures(gameState, player);
-            features.forEach((direction, directionFeatures) -> {
-                String featureName = String.format("line_%d_%d", player.ordinal() + 1, direction);
-                featureCounts.put(featureName, directionFeatures.values().stream().mapToInt(Collection::size).sum());
+            Map<Integer, Set<LineBoardFeature>> features = getFeatures(gameState, player);
+            features.forEach((length, lengthFeatures) -> {
+                String featureName = String.format("line_%d_%d", player.ordinal() + 1, length);
+                featureCounts.put(featureName, lengthFeatures.size());
             });
         }
         return featureCounts;

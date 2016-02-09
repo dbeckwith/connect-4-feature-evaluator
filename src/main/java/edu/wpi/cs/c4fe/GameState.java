@@ -12,6 +12,7 @@ public class GameState {
     private final BoardCell[][] boardState;
     private final int connectLength;
     private boolean[] playerHasPopped;
+    private Player winner;
 
     /**
      * Creates a GameState instance with a width, height, {@link Player} turn and connect length for winning.
@@ -42,10 +43,11 @@ public class GameState {
      * @param boardState      The board state to set for this game state.
      * @param playerHasPopped The states of each player having used their pop move in the game.
      */
-    public GameState(int connectLength, BoardCell[][] boardState, boolean[] playerHasPopped) {
+    public GameState(int connectLength, BoardCell[][] boardState, boolean[] playerHasPopped, Player winner) {
         this.connectLength = connectLength;
         this.boardState = boardState;
         this.playerHasPopped = playerHasPopped;
+        this.winner = winner;
 
         // Reject boards that are not at least the width or height of their connect length
         if (getWidth() < connectLength && getHeight() < connectLength) {
@@ -66,6 +68,10 @@ public class GameState {
         for (int i = 0; i < state.getWidth(); i++) {
             boardState[i] = state.boardState[i].clone();
         }
+    }
+
+    public Player getWinner() {
+        return winner;
     }
 
     /**

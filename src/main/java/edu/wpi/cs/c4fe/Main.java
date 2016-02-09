@@ -1,7 +1,16 @@
 package edu.wpi.cs.c4fe;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +45,7 @@ public class Main {
                 new LineBoardFeatureCounter()
         };
         Map<String, Number[]> features = new HashMap<>();
+        Number[] winners = new Number[states.size()];
         for (int i = 0; i < states.size(); i++) {
             int row = i;
             for (BoardFeature tester : featureTesters) {
@@ -44,7 +54,9 @@ public class Main {
                     features.computeIfAbsent(name, s -> new Number[states.size()])[row] = value;
                 });
             }
+            winners[i] = states.get(i).getWinner().ordinal()+1;
         }
+        features.put("winner", winners);
         System.out.println(features);
 
         write(outputFile, states.size(), features);
@@ -71,6 +83,7 @@ public class Main {
             while ((input = bufferedReader.readLine()) != null) {
                 String[] positions = input.split(",");
                 BoardCell[][] gameBoard = new BoardCell[BOARD_WIDTH][BOARD_HEIGHT]; // x firs increase, y decrease
+                Player winner = null;
 
                 // Set the board values from the positions in the input
                 try {
@@ -81,19 +94,23 @@ public class Main {
                             index++;
                         }
                     }
-                } catch (NumberFormatException e) {
+
+                    winner = Player.values()[Integer.parseInt(positions[positions.length - 1]) - 1];
+                }
+                catch (NumberFormatException e) {
                     e.printStackTrace();
                     break;
                 }
 
                 // Create a new GameState from the board
-                GameState state = new GameState(CONNECT_LENGTH, gameBoard, new boolean[] { false, false });
+                GameState state = new GameState(CONNECT_LENGTH, gameBoard, new boolean[] { false, false }, winner);
 
                 states.add(state);
             }
 
             return states;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -115,7 +132,8 @@ public class Main {
                         .collect(Collectors.joining(",")));
             }
             w.close();
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
